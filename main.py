@@ -1,56 +1,50 @@
-from telegram import Update, ReplyKeyboardMarkup
+import os
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
-    MessageHandler,
-    ContextTypes,
-    filters
+    CallbackQueryHandler,
+    ContextTypes
 )
 
-TOKEN = "8253920190:AAGi6X2rCPZ0sU_q8prGZP-8OzUsCbZaCmE"
+# токен берётся из переменной окружения (Railway)
+TOKEN = os.getenv("BOT_TOKEN")
 
-# /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
-        ["Купить SeliWare"],
-        ["ОПИСАНИЕ"]
+        [
+            InlineKeyboardButton("🛒 Купить SeilWare", callback_data="buy"),
+            InlineKeyboardButton("📄 ОПИСАНИЕ", callback_data="desc")
+        ]
     ]
-    reply_markup = ReplyKeyboardMarkup(
-        keyboard,
-        resize_keyboard=True
-    )
+    reply_markup = InlineKeyboardMarkup(keyboard)
 
     await update.message.reply_text(
-        "Привет! Нажми кнопку ниже 👇",
+        "Выбери действие:",
         reply_markup=reply_markup
     )
 
-# текстовые кнопки
-async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = update.message.text
+async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
 
-    if text == "ОПИСАНИЕ":
-        await update.message.reply_text(
+    if query.data == "desc":
+        await query.message.reply_text(
             "при покупке мы даём вас гарантию на неделю @Ragfa9"
         )
 
-    elif text == "Купить SeliWare":
-        await update.message.reply_text(
-            "Привет, у него @DollarWare ты можешь купить SeliWare по низкой цене"
-        )
-
-    else:
-        await update.message.reply_text(
-            "Нажми кнопку 👇"
+    elif query.data == "buy":
+        await query.message.reply_text(
+            "Привет, у него @DollarWare\n"
+            "ты можешь купить SeliWare по низкой цене"
         )
 
 def main():
     app = ApplicationBuilder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_handler))
+    app.add_handler(CallbackQueryHandler(buttons))
 
-    print("Бот запущен...")
     app.run_polling()
 
 if __name__ == "__main__":
