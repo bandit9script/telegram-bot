@@ -30,12 +30,12 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if query.data == "desc":
         await query.message.reply_text(
-            "при покупке мы даём вас гарантию на неделю @Ragfa9"
+            "при покупке мы даём вам гарантию на неделю @Ragfa9"
         )
 
     elif query.data == "buy":
         await query.message.reply_text(
-            "Привет, у него @DollarWare\n"
+            "Привет, у него @whiletruedo\n"
             "ты можешь купить SeliWare по низкой цене"
         )
 
@@ -49,3 +49,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
